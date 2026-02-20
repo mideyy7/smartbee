@@ -1,7 +1,6 @@
-import { useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { AnimatePresence} from 'framer-motion'
 import { MapContainer, TileLayer, CircleMarker, Popup, Polyline, useMap } from 'react-leaflet'
-import { useEffect } from 'react'
 import { AlertTriangle, Navigation, Clock, Users, ChevronRight, RotateCcw } from 'lucide-react'
 
 const MANCHESTER_CENTER = [53.4808, -2.2426]
@@ -86,7 +85,10 @@ const SEVERITY_STYLES = {
 
 function SimMapResizer() {
   const map = useMap()
-  useEffect(() => { setTimeout(() => map.invalidateSize(), 120) }, [map])
+  useEffect(() => {
+    const timer = setTimeout(() => map.invalidateSize(), 120)
+    return () => clearTimeout(timer)
+  }, [map])
   return null
 }
 
@@ -291,6 +293,7 @@ export default function RoadClosureSimulator() {
         <AnimatePresence>
           {simResult && (
             <motion.div
+              key="sim-result"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
